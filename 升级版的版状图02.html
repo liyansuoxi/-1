@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <style>
+        
+
+        canvas {
+            border: 1px solid gray;
+        }
+    </style>
+    <title>document</title>
+</head>
+
+<body>
+    <canvas id="canvas" width="600" height="400"></canvas>
+</body>
+<script>
+    var canvas = document.querySelector('canvas');
+    var ctx = canvas.getContext('2d');
+   //设置一个假数据
+    var datas = [
+        {title: "程序员", count: 3000, color: "blue"},
+        {title: "设计美眉", count: 1200, color: "pink"},
+        {title: "产品经理", count: 800, color: "green"},
+        {title: "架构师", count: 600, color: "orange"},
+        {title: "测试", count: 1800, color: "red"},
+        {title: "程序员鼓励师", count: 1600, color: "yellow"}
+    ];
+    //设置第一次的人数为0;
+    var sum = 0;
+    //算出总人数
+    datas.forEach(function(t){
+        sum+=t.count;
+    })
+    //设置起始的弧度是
+    var startRadian = 0;
+    //遍历数组
+    datas.forEach(function(obj){
+        //重新设置玻璃纸
+        ctx.beginPath();
+        //计算人的比列
+        var person = obj.count/sum;
+        //计算角度
+        var jiaodu = 360*person;
+        //计算弧度
+        var radian = jiaodu/180*Math.PI;
+
+        //设置文字,首先得知道在圆上的坐标
+        var textRadian = startRadian + radian/2;
+        var y = 150*Math.sin(textRadian);
+        var x = 150*Math.cos(textRadian);
+
+        //知道了坐标,现在就需要画线,并且重新设置玻璃纸
+        ctx.beginPath();
+        ctx.moveTo(300,200);
+        ctx.lineTo(300+x,200+y);
+
+        //由于是根据文字的大小来,来设置长度,所以先算出文字的长度
+        var textWidth = ctx.measureText(obj.title).width;
+        //要先判断文字在哪一天,是以哪边对齐
+        if(300+x < 300){
+            ctx.lineTo(300+x-textWidth,200+y);
+            //右对齐
+            ctx.textAlign = "right";
+        }else{
+            ctx.lineTo(300+x+textRadian,200+y);
+            //左对齐
+            ctx.textAlign = "left";
+        }
+
+        //绘制文字
+        ctx.font = "14px black";
+        ctx.fillText(obj.title,300+x,200+y);
+        //还原画笔
+        ctx.restore();
+
+
+        //画弧
+        //重新设置玻璃纸
+        ctx.beginPath();
+        ctx.arc(300,200,150,startRadian,startRadian+radian);
+        ctx.lineTo(300,200);
+        ctx.closePath();
+        //填充颜色
+        ctx.fillStyle = obj.color;
+        ctx.fill();
+        //没循环一次,加一次
+        startRadian+=radian;
+    })
+</script>
+</html>
